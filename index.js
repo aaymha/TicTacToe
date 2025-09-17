@@ -1,11 +1,24 @@
+function CreatePlayer(name, mark) {
+    const moves = [];
+
+    return {name, mark, moves};
+}
+const Player1 = CreatePlayer("Simon", "X");
+const Player2 = CreatePlayer("Paj", "O");
+
 const DisplayDom = (() => {
-    const container = document.querySelector(".board-container");
-
-    return {};
+    const boxArea = document.querySelectorAll(".box");
+    function populateBoard(currentPlayerMark, currentPlayerMoves) {
+        boxArea.forEach(box => {
+            box.addEventListener("click", function () {
+                box.textContent = currentPlayerMark;
+                let move = parseInt(box.id);
+                currentPlayerMoves.push(move);
+            })
+        });
+    }
+    return {populateBoard};
 })();
-
-
-
 
 const GameboardModule = (() => {
     let gameboardArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -31,14 +44,6 @@ const GameboardModule = (() => {
     }
     return {displayGameboard, newGameboard, makeMove};
 })();
-
-function CreatePlayer(name, mark) {
-    let moves = [];
-    return {name, mark, moves};
-}
-
-const Player1 = CreatePlayer("Simon", "X");
-const Player2 = CreatePlayer("Paj", "O");
 
 const GameController = (() => {
     let currentPlayer = Player1;

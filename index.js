@@ -1,48 +1,37 @@
 function CreatePlayer(name, mark) {
     const moves = [];
 
-    return {name, mark, moves};
+    return {name, mark, moves: []};
 }
 const Player1 = CreatePlayer("Simon", "X");
 const Player2 = CreatePlayer("Paj", "O");
 
 const DisplayDom = (() => {
     const boxArea = document.querySelectorAll(".box");
-    function populateBoard(currentPlayerMark, currentPlayerMoves) {
+
+    function populateBoard() {
         boxArea.forEach(box => {
-            box.addEventListener("click", function () {
-                box.textContent = currentPlayerMark;
-                let move = parseInt(box.id);
-                currentPlayerMoves.push(move);
-            })
+            box.addEventListener("click", function (e) {
+                GameController.makeMove(parseInt(e.target.id));
+            });
         });
     }
-    return {populateBoard};
-})();
 
-const GameboardModule = (() => {
-    let gameboardArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-
-    const displayGameboard = () => {
-        console.log(`${gameboardArray[0]} | ${gameboardArray[1]} | ${gameboardArray[2]}`);
-        console.log('---------');
-        console.log(`${gameboardArray[3]} | ${gameboardArray[4]} | ${gameboardArray[5]}`);
-        console.log('---------');
-        console.log(`${gameboardArray[6]} | ${gameboardArray[7]} | ${gameboardArray[8]}`);
+    function updateBox(boxId, mark) {
+        boxArea[boxId].textContent = mark;
     }
 
-    const newGameboard = () => {gameboardArray = [0, 1, 2, 3, 4, 5, 6, 7, 8]};
-
-    const makeMove = (indexValue, mark) => {
-        if(typeof gameboardArray[indexValue] === "number") {
-            gameboardArray[indexValue] = mark;
-            return true;
-        } else {
-            console.log("Taken") ;
-            return false;
-        }
+    function isBoxEmpty(boxId) {
+        return boxArea[boxId].textContent === "";
     }
-    return {displayGameboard, newGameboard, makeMove};
+
+    function clearBoard() {
+        document.querySelectorAll(".box").forEach(box => {
+            box.textContent = "";
+        });
+    }
+
+    return {populateBoard, updateBox, isBoxEmpty, clearBoard};
 })();
 
 const GameController = (() => {
@@ -68,40 +57,39 @@ const GameController = (() => {
         );
     }
 
-    const playTurn = () => {
+    const checkForTie = () => {
+        return Player1.moves.length + Player2.moves.length >= 8
+    }
 
-        let userInput = prompt(`${currentPlayer.name} turn, choose position 0-8!`)
-        let index = parseInt(userInput);
-        if (isNaN(index) || index < 0 || index > 8) {
-            console.log("Invalid input");
-            playTurn();
-            return;
+   const makeMove = (boxId) => {
+        if(!DisplayDom.isBoxEmpty(boxId)) return;
+
+        currentPlayer.moves.push(boxId);
+        DisplayDom.updateBox(boxId, currentPlayer.mark);
+
+        if(checkForWinner()) {
+            alert(`${currentPlayer.name} has won!`)
+            startGame();
         }
 
-        if(GameboardModule.makeMove(index, currentPlayer.mark)) {
-            GameboardModule.displayGameboard();
-
-            currentPlayer.moves.push(index);
-            if(checkForWinner()) {
-                console.log(`${currentPlayer.name} won!`)
-            } else {
-                console.log(currentPlayer.moves);
-                switchPlayer();
-                console.log(`${currentPlayer.name} turn`);
-                playTurn();
-            }
-        } else {
-            console.log("Taken");
-            playTurn();
+        if(checkForTie()) {
+            alert("Its a tie!");
+            startGame();
         }
-    };
+
+        switchPlayer();
+   }
+
     const startGame = () => {
-        console.log("starting new game");
-        GameboardModule.newGameboard();
         currentPlayer = Player1;
-        GameboardModule.displayGameboard();
-        playTurn();
+        Player1.moves = [];
+        Player2.moves = [];
+        DisplayDom.clearBoard();
+        DisplayDom.populateBoard();
+
     };
 
-    return {startGame};
+    return {startGame, makeMove};
 })();
+
+GameController.startGame();

@@ -1,3 +1,12 @@
+const DisplayDom = (() => {
+    const container = document.querySelector(".board-container");
+
+    return {};
+})();
+
+
+
+
 const GameboardModule = (() => {
     let gameboardArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
@@ -29,7 +38,7 @@ function CreatePlayer(name, mark) {
 }
 
 const Player1 = CreatePlayer("Simon", "X");
-const Player2 = CreatePlayer("Majpus", "O");
+const Player2 = CreatePlayer("Paj", "O");
 
 const GameController = (() => {
     let currentPlayer = Player1;
@@ -88,6 +97,6 @@ const GameController = (() => {
         GameboardModule.displayGameboard();
         playTurn();
     };
+
     return {startGame};
 })();
-GameController.startGame();

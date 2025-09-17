@@ -1,0 +1,18 @@
+.container {
+    display: grid;
+    grid-template-rows: 2fr 50vh 10fr;
+    grid-template-columns: 2fr 4fr 2fr;
+}
+
+
+.board-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-area: 2 / -3;
+
+
+}
+
+.board-container > div {
+    border: 1px solid black;
+}
